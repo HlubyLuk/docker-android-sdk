@@ -7,7 +7,7 @@ USER root:root
 
 WORKDIR /tmp
 ARG SDK=sdk-tools-linux-4333796.zip
-ADD https://dl.google.com/android/repository/${SDK}.zip ./
+ADD https://dl.google.com/android/repository/${SDK} ./
 RUN set -e \
 && unzip ${SDK} > /dev/null \
 && rm -v ${SDK}
