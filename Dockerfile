@@ -1,7 +1,7 @@
-FROM gradle:jdk8-slim
+FROM openjdk:8-jdk-slim
 
 LABEL maintainer="lukas.hlubucek@gmail.com"
-LABEL version="1"
+LABEL version="2"
 
 USER root:root
 
@@ -12,6 +12,11 @@ RUN set -e \
 && unzip ${SDK} > /dev/null \
 && rm -v ${SDK}
 
+# # For debug uncomment.
+# # Copy files and directories in context into `/tmp`.
+# # Muset allow in `.dockerignore`.
+# ADD ./* ./
+
 WORKDIR /opt
 ENV ANDROID_HOME=/opt/sdk \
 ANDROID_SDK_ROOT=/opt/sdk \
@@ -21,4 +26,4 @@ RUN set -e \
 && touch /root/.android/repositories.cfg \
 && mv /tmp/tools /opt/sdk \
 && ln -s /opt/sdk/tools/bin/* /bin/ \
-&& yes y | sdkmanager --licenses > /dev/null
+&& yes y | sdkmanager --licenses
