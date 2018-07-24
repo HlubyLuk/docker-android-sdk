@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-slim
 
 LABEL maintainer="lukas.hlubucek@gmail.com"
-LABEL version="2"
+LABEL version="3"
 
 USER root:root
 
@@ -11,11 +11,6 @@ ADD https://dl.google.com/android/repository/${SDK} ./
 RUN set -e \
 && unzip ${SDK} > /dev/null \
 && rm -v ${SDK}
-
-# # For debug uncomment.
-# # Copy files and directories in context into `/tmp`.
-# # Muset allow in `.dockerignore`.
-# ADD ./* ./
 
 WORKDIR /opt
 ENV ANDROID_HOME=/opt/sdk \
@@ -27,3 +22,9 @@ RUN set -e \
 && mv /tmp/tools /opt/sdk \
 && ln -s /opt/sdk/tools/bin/* /bin/ \
 && yes y | sdkmanager --licenses
+
+# # For debug uncomment.
+# # Copy files and directories in context into `/tmp`.
+# # Muset allow in `.dockerignore`.
+# WORKDIR /tmp
+# COPY ./* ./
