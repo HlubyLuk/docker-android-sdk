@@ -23,6 +23,11 @@ RUN set -e \
 && ln -s /opt/sdk/tools/bin/* /bin/ \
 && yes y | sdkmanager --licenses
 
+RUN apt update && apt install -y curl build-essential \
+&& curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+&& apt install -y nodejs \
+&& npm install -g apollo-codegen@0.19.1
+
 # # For debug uncomment.
 # # Copy files and directories in context into `/tmp`.
 # # Muset allow in `.dockerignore`.
