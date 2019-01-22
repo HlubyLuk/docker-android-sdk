@@ -28,6 +28,13 @@ RUN apt update && apt install -y curl build-essential \
 && apt install -y nodejs \
 && npm install -g apollo-codegen@0.19.1
 
+RUN yes y \
+| sdkmanager \
+"platforms;android-28" \
+"build-tools;28.0.1" \
+"build-tools;28.0.2" \
+"build-tools;28.0.3"
+
 # # For debug uncomment.
 # # Copy files and directories in context into `/tmp`.
 # # Muset allow in `.dockerignore`.
