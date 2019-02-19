@@ -30,6 +30,10 @@ RUN apt update && apt install -y curl build-essential \
 
 RUN yes y \
 | sdkmanager \
+"platforms;android-27" \
+"build-tools;27.0.1" \
+"build-tools;27.0.2" \
+"build-tools;27.0.3" \
 "platforms;android-28" \
 "build-tools;28.0.1" \
 "build-tools;28.0.2" \
