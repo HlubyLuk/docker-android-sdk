@@ -1,9 +1,22 @@
-FROM openjdk:8-jdk-slim
+FROM debian:stable AS openjdk8_builder
 
 LABEL maintainer="lukas.hlubucek@gmail.com"
-LABEL version="3"
+LABEL version="4"
 
-USER root:root
+ARG URL_KEY=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
+ARG URL_REPO=https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+RUN set -e \
+&& apt update && apt install -y --no-install-recommends \
+gnupg \
+software-properties-common \
+unzip \
+wget \
+&& wget -qO - ${URL_KEY} | apt-key add - \
+&& add-apt-repository --yes --update ${URL_REPO} \
+&& apt install -y adoptopenjdk-8-hotspot \
+&& rm -rf /var/lib/apt/lists/*
+
+FROM openjdk8_builder AS android_builder
 
 WORKDIR /tmp
 ARG SDK=sdk-tools-linux-4333796.zip
@@ -22,6 +35,8 @@ RUN set -e \
 && mv /tmp/tools /opt/sdk \
 && ln -s /opt/sdk/tools/bin/* /bin/ \
 && yes y | sdkmanager --licenses
+
+FROM android_builder AS project_builder
 
 # # For debug uncomment.
 # # Copy files and directories in context into `/tmp`.
