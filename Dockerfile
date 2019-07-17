@@ -6,14 +6,15 @@ LABEL version="4"
 ARG URL_KEY=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public
 ARG URL_REPO=https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 RUN set -e \
-&& apt update && apt install -y --no-install-recommends \
+&& apt update \
+&& apt install -y --no-install-recommends \
 gnupg \
 software-properties-common \
 unzip \
 wget \
 && wget -qO - ${URL_KEY} | apt-key add - \
 && add-apt-repository --yes --update ${URL_REPO} \
-&& apt install -y adoptopenjdk-8-hotspot \
+&& apt install -y --no-install-recommends adoptopenjdk-8-hotspot \
 && rm -rf /var/lib/apt/lists/*
 
 FROM openjdk8_builder AS android_builder
@@ -36,7 +37,16 @@ RUN set -e \
 && ln -s /opt/sdk/tools/bin/* /bin/ \
 && yes y | sdkmanager --licenses
 
-FROM android_builder AS project_builder
+FROM android_builder AS apolo_builder
+RUN set -e \
+&& apt update \
+&& apt install -y --no-install-recommends curl \
+&& curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+&& apt-get install -y nodejs \
+&& npm install -g apollo-codegen@0.19.1 \
+&& rm -rf /var/lib/apt/lists/*
+
+FROM apolo_builder AS project_builder
 
 # # For debug uncomment.
 # # Copy files and directories in context into `/tmp`.
