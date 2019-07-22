@@ -7,18 +7,18 @@ RUN set -e \
 && tar -xf ${JDK_ARCHIVE} \
 && rm -rfv ${JDK_ARCHIVE}
 
-# FROM node:lts-slim as builder_node
-# RUN npm install -g apollo-codegen@0.19.1
+FROM node:lts-slim as builder_node
+RUN npm install -g apollo-codegen@0.19.1
 
 FROM debian:stable as builder_sdk
 WORKDIR /tmp
-ARG SDK=sdk-tools-linux-4333796.zip
-ADD https://dl.google.com/android/repository/${SDK} ./
+ARG SDK_ARCHIVE=sdk-tools-linux-4333796.zip
+ADD https://dl.google.com/android/repository/${SDK_ARCHIVE} ./
 RUN set -e \
 && apt update -qq \
 && apt install -yqq --no-install-recommends unzip \
-&& unzip ${SDK} > /dev/null \
-&& rm -v ${SDK}
+&& unzip ${SDK_ARCHIVE} > /dev/null \
+&& rm -v ${SDK_ARCHIVE}
 
 FROM debian:stable-slim
 
@@ -26,7 +26,7 @@ LABEL maintainer="lukas.hlubucek@gmail.com"
 LABEL version="4"
 
 COPY --from=builder_jdk /tmp /opt
-# COPY --from=builder_node /usr/local /opt/node
+COPY --from=builder_node /usr/local /opt/node
 COPY --from=builder_sdk /tmp /opt/sdk
 
 ENV ANDROID_HOME=/opt/sdk \
