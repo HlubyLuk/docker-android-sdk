@@ -5,8 +5,8 @@ build:
 		--force-rm \
 		--no-cache \
 		--rm \
-		--tag="android-sdk:4" \
-		--tag="android-sdk:latest" \
+		--tag="docker.dev.dszn.cz/mogen/android-sdk:4-apollo" \
+		--tag="docker.dev.dszn.cz/mogen/android-sdk:latest-apollo" \
 		.
 
 run:
