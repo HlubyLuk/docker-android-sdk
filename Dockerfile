@@ -1,4 +1,4 @@
-FROM debian:stable as builder_jdk
+FROM busybox:latest as builder_jdk
 WORKDIR /tmp
 ARG JDK_URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download
 ARG JDK_ARCHIVE=OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
@@ -7,26 +7,24 @@ RUN set -e \
 && tar -xf ${JDK_ARCHIVE} \
 && rm -rfv ${JDK_ARCHIVE}
 
-FROM node:lts-slim as builder_node
-RUN npm install -g apollo-codegen@0.19.1
+# FROM node:lts-slim as builder_node
+# RUN npm install -g apollo-codegen@0.19.1
 
-FROM debian:stable as builder_sdk
+FROM busybox:latest as builder_sdk
 WORKDIR /tmp
 ARG SDK_ARCHIVE=sdk-tools-linux-4333796.zip
 ADD https://dl.google.com/android/repository/${SDK_ARCHIVE} ./
 RUN set -e \
-&& apt update -qq \
-&& apt install -yqq --no-install-recommends unzip \
 && unzip ${SDK_ARCHIVE} > /dev/null \
 && rm -v ${SDK_ARCHIVE}
 
 FROM debian:stable-slim
 
 LABEL maintainer="lukas.hlubucek@gmail.com"
-LABEL version="4"
+LABEL version="5"
 
 COPY --from=builder_jdk /tmp /opt
-COPY --from=builder_node /usr/local /opt/node
+# COPY --from=builder_node /usr/local /opt/node
 COPY --from=builder_sdk /tmp /opt/sdk
 
 ENV ANDROID_HOME=/opt/sdk \
@@ -38,8 +36,8 @@ RUN set -e \
 && touch /root/.android/repositories.cfg \
 && yes y | sdkmanager --licenses
 
-# # For debug uncomment.
-# # Copy files and directories in context into `/tmp`.
-# # Muset allow in `.dockerignore`.
-# WORKDIR /tmp
-# COPY ./* ./
+## ## For debug uncomment.
+## ## Copy files and directories in context into `/tmp`.
+## ## Muset allow in `.dockerignore`.
+## WORKDIR /tmp
+## COPY ./* ./
