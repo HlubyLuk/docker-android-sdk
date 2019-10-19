@@ -5,9 +5,21 @@ build:
 		--force-rm \
 		--no-cache \
 		--rm \
-		--tag="docker.dev.dszn.cz/mogen/android-sdk:4-apollo" \
-		--tag="docker.dev.dszn.cz/mogen/android-sdk:latest-apollo" \
+		--tag="docker.dev.dszn.cz/mogen/android-sdk:5" \
+		--tag="docker.dev.dszn.cz/mogen/android-sdk:latest" \
 		.
+
+build-apollo:
+	sed -e "s/^# //" ./Dockerfile \
+		| docker build \
+			--compress \
+			--file=Dockerfile \
+			--force-rm \
+			--no-cache \
+			--rm \
+			--tag="docker.dev.dszn.cz/mogen/android-sdk:5-apollo" \
+			--tag="docker.dev.dszn.cz/mogen/android-sdk:latest-apollo" \
+			-
 
 run:
 	docker run \
