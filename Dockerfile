@@ -1,8 +1,9 @@
 FROM busybox:latest as builder_jdk
 WORKDIR /tmp
 ARG JDK_URL=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download
-ARG JDK_ARCHIVE=OpenJDK8U-jdk_x64_linux_hotspot_8u222b10.tar.gz
-ADD ${JDK_URL}/jdk8u222-b10/${JDK_ARCHIVE} .
+ARG JDK_DIR=jdk8u262-b10
+ARG JDK_ARCHIVE=OpenJDK8U-jdk_x64_linux_hotspot_8u262b10.tar.gz
+ADD ${JDK_URL}/${JDK_DIR}/${JDK_ARCHIVE} .
 RUN set -e \
 && tar -xf ${JDK_ARCHIVE} \
 && rm -rfv ${JDK_ARCHIVE}
@@ -19,22 +20,23 @@ RUN set -e \
 && rm -v ${SDK_ARCHIVE}
 
 FROM debian:stable-slim
-
 LABEL maintainer="lukas.hlubucek@gmail.com"
-LABEL version="5"
-
+LABEL version="6"
+ARG JDK_DIR=jdk8u262-b10
 COPY --from=builder_jdk /tmp /opt
 # COPY --from=builder_node /usr/local /opt/node
 COPY --from=builder_sdk /tmp /opt/sdk
-
-ENV ANDROID_HOME=/opt/sdk \
+ENV \
+ANDROID_HOME=/opt/sdk \
 ANDROID_SDK_ROOT=/opt/sdk \
-REPO_OS_OVERRIDE=linux \
-PATH=/opt/sdk/tools/bin:/opt/node/bin:/opt/jdk8u222-b10/bin:$PATH
+JAVA_HOME="/opt/${JDK_DIR}" \
+PATH=/opt/sdk/tools/bin:/opt/node/bin:/opt/${JDK_DIR}/bin:$PATH \
+REPO_OS_OVERRIDE=linux
 RUN set -e \
 && mkdir -p /opt/sdk /root/.android \
 && touch /root/.android/repositories.cfg \
-&& yes y | sdkmanager --licenses
+&& yes y | sdkmanager --licenses \
+&& sdkmanager ndk-bundle
 
 ## ## For debug uncomment.
 ## ## Copy files and directories in context into `/tmp`.

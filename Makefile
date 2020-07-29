@@ -5,7 +5,7 @@ build:
 		--force-rm \
 		--no-cache \
 		--rm \
-		--tag="docker.dev.dszn.cz/mogen/android-sdk:5" \
+		--tag="docker.dev.dszn.cz/mogen/android-sdk:6" \
 		--tag="docker.dev.dszn.cz/mogen/android-sdk:latest" \
 		.
 
@@ -17,7 +17,7 @@ build-apollo:
 			--force-rm \
 			--no-cache \
 			--rm \
-			--tag="docker.dev.dszn.cz/mogen/android-sdk:5-apollo" \
+			--tag="docker.dev.dszn.cz/mogen/android-sdk:6-apollo" \
 			--tag="docker.dev.dszn.cz/mogen/android-sdk:latest-apollo" \
 			-
 
@@ -26,7 +26,7 @@ run:
 		--interactive \
 		--rm \
 		--tty \
-		android-sdk:latest
+		docker.dev.dszn.cz/mogen/android-sdk:latest
 
 remove-all:
 	docker image ls \
