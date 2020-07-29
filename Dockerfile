@@ -36,7 +36,9 @@ RUN set -e \
 && mkdir -p /opt/sdk /root/.android \
 && touch /root/.android/repositories.cfg \
 && yes y | sdkmanager --licenses \
-&& sdkmanager ndk-bundle
+&& sdkmanager ndk-bundle \
+&& sdkmanager --list | grep -e "build-tools" | cut -d "|" -f 1 | tr -s " " | sort | tail --lines=5 | sed -e "s/ //g" | xargs -n 1 -I {} sdkmanager "{}" \
+&& sdkmanager --list | grep -e "platform" | grep -e "android" | cut -d "|" -f 1 | sed -e "s/ //g" | sort  --key=2 --field-separator="-" --general-numeric-sort | tail --line=5 | xargs -n 1 -I {} sdkmanager "{}"
 
 ## ## For debug uncomment.
 ## ## Copy files and directories in context into `/tmp`.
