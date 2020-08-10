@@ -1,44 +1,38 @@
-build:
+.PHONY: all plain apollo
+
+JDK_URL:= $(shell python ./jdk_latest_url.py)
+CURRENT_VERSION := 7
+
+all: plain apollo ndk
+
+plain:
 	docker build \
-		--compress \
 		--file=Dockerfile \
 		--force-rm \
 		--no-cache \
-		--rm \
-		--tag="docker.dev.dszn.cz/mogen/android-sdk:5" \
-		--tag="docker.dev.dszn.cz/mogen/android-sdk:latest" \
+		--rm --build-arg LATEST_JDK_URL="${JDK_URL}" \
+		--tag=docker.dev.dszn.cz/mogen/android-sdk:latest \
+		--tag=docker.dev.dszn.cz/mogen/android-sdk:${CURRENT_VERSION} \
 		.
 
-build-apollo:
-	sed -e "s/^# //" ./Dockerfile \
+apollo:
+	sed -e 's/^\#apollo //' ./Dockerfile \
 		| docker build \
-			--compress \
-			--file=Dockerfile \
 			--force-rm \
 			--no-cache \
 			--rm \
-			--tag="docker.dev.dszn.cz/mogen/android-sdk:5-apollo" \
-			--tag="docker.dev.dszn.cz/mogen/android-sdk:latest-apollo" \
+			--build-arg LATEST_JDK_URL="${JDK_URL}" \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:apollo-latest \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:apollo-${CURRENT_VERSION} \
 			-
 
-run:
-	docker run \
-		--interactive \
-		--rm \
-		--tty \
-		android-sdk:latest
-
-remove-all:
-	docker image ls \
-		| tail +2 \
-		| tr -s " " \
-		| cut -d " " -f 3 \
-		| xargs docker image rm --force
-
-clean:
-	docker image ls \
-		| grep -ve "android-sdk" \
-		| tail +2 \
-		| tr -s " " \
-		| cut -d " " -f 3 \
-		| xargs docker image rm --force
+ndk:
+	sed -e 's/^\#ndk //' ./Dockerfile \
+		| docker build \
+			--force-rm \
+			--no-cache \
+			--rm \
+			--build-arg LATEST_JDK_URL="${JDK_URL}" \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:ndk-latest \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:ndk-${CURRENT_VERSION} \
+			-
