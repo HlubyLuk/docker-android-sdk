@@ -36,3 +36,4 @@ RUN set -e \
 && mkdir -p /opt/sdk /root/.android \
 && touch /root/.android/repositories.cfg \
 && yes y | sdkmanager --licenses
+#ndk RUN set -e && sdkmanager ndk-bundle

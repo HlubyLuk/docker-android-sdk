@@ -3,7 +3,7 @@
 JDK_URL:= $(shell python ./jdk_latest_url.py)
 CURRENT_VERSION := 7
 
-all: plain apollo
+all: plain apollo ndk
 
 plain:
 	docker build \
@@ -16,7 +16,7 @@ plain:
 		.
 
 apollo:
-	sed -e 's/^\#apollo//' ./Dockerfile \
+	sed -e 's/^\#apollo //' ./Dockerfile \
 		| docker build \
 			--force-rm \
 			--no-cache \
@@ -26,16 +26,13 @@ apollo:
 			--tag=docker.dev.dszn.cz/mogen/android-sdk:apollo-${CURRENT_VERSION} \
 			-
 
-#.PHONY: build plain apollo
-#SED_PATTERN=
-#CURRENT_PREFIX=
-#build:
-#	sed -e 's/${SED_PATTERN}//' ./Dockerfile \
-#		| docker build \
-#			--force-rm \
-#			--no-cache \
-#			--rm \
-#			--build-arg LATEST_JDK_URL="${JDK_URL}" \
-#			--tag=docker.dev.dszn.cz/mogen/android-sdk:${CURRENT_PREFIX}latest \
-#			--tag=docker.dev.dszn.cz/mogen/android-sdk:${CURRENT_PREFIX}${CURRENT_VERSION} \
-#			-
+ndk:
+	sed -e 's/^\#ndk //' ./Dockerfile \
+		| docker build \
+			--force-rm \
+			--no-cache \
+			--rm \
+			--build-arg LATEST_JDK_URL="${JDK_URL}" \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:ndk-latest \
+			--tag=docker.dev.dszn.cz/mogen/android-sdk:ndk-${CURRENT_VERSION} \
+			-
